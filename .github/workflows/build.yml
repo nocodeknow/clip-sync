@@ -26,6 +26,10 @@ jobs:
         with:
           channel: stable
 
+      - name: Create local.properties
+        working-directory: android_app/android
+        run: echo "flutter.sdk=$FLUTTER_ROOT" > local.properties
+
       - name: Get dependencies
         working-directory: android_app
         run: flutter pub get
