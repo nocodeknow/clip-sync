@@ -26,9 +26,17 @@ jobs:
         with:
           channel: stable
 
-      - name: Create local.properties
-        working-directory: android_app/android
-        run: echo "flutter.sdk=$FLUTTER_ROOT" > local.properties
+      # Let Flutter generate all Android project scaffolding for the exact
+      # installed Flutter version. It won't overwrite files that already exist
+      # (our lib/ code and pubspec.yaml are safe).
+      - name: Generate Android project files
+        working-directory: android_app
+        run: flutter create . --project-name clipsync --org com.nocodeknow --platforms android
+
+      # flutter create overwrites AndroidManifest.xml — restore our custom one
+      # which has the extra network permissions for WebSocket + UDP broadcast.
+      - name: Restore custom AndroidManifest
+        run: cp android_app/AndroidManifest.xml android_app/android/app/src/main/AndroidManifest.xml
 
       - name: Get dependencies
         working-directory: android_app
